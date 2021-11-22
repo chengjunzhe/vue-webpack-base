@@ -1,6 +1,9 @@
 const path = require("path");
+const resolve= file=>path.resolve(__dirname,file)
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
+
+const isProd=process.env.NODE_ENV==='production'
 
 const vuePlugin = new VueLoaderPlugin();
 
@@ -12,16 +15,23 @@ const htmlPlugin = new HtmlWebpackPlugin({
 })
 
 module.exports = {
-    mode: "development",
-    //设置入口文件路径
-    entry: path.join(__dirname, "./src/index.js"),
+    mode: isProd?'production':'development',
     //设置出口文件
     output: {
         //设置路径
-        path: path.join(__dirname, "./dist"),
+        path: resolve("../dist/"),
+        // 设置公共路径
+        publicPath:'/dist/',
         //设置文件名
-        filename: "res.js"
+        filename: "js/[name].[chunkhash].js"
     },
+    resolve:{
+        alias:{
+            '@':resolve('../src/')
+        },
+        extensions:['.js','.vue','.json']
+    },
+    devtool:isProd?'source-map':'cheap-module-eval-source-map',
     module: {
         rules: [
             {
